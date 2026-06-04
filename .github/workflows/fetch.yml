@@ -6,6 +6,9 @@ on:
     - cron: "5 * * * *"
   workflow_dispatch:  # 允许手动触发
 
+permissions:
+  contents: write
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -29,7 +32,7 @@ jobs:
       - name: Commit and push data
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "📡 Weather snapshot $(date +'%Y-%m-%d %H:00 CST')"
+          commit_message: "weather: hourly forecast snapshot"
           commit_user_name: "weather-bot"
           commit_user_email: "weather-bot@github.com"
           branch: master
