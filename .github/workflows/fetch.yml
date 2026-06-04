@@ -1,0 +1,36 @@
+name: Hourly Weather Forecast Fetch
+
+on:
+  schedule:
+    # 每小时的第 5 分钟运行（UTC 时间，对应北京时间 :05）
+    - cron: "5 * * * *"
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch weather forecast
+        run: python fetch_weather_github.py
+
+      - name: Commit and push data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "📡 Weather snapshot $(date +'%Y-%m-%d %H:00 CST')"
+          commit_user_name: "weather-bot"
+          commit_user_email: "weather-bot@github.com"
+          branch: main
+          file_pattern: "data/**/*.json"
